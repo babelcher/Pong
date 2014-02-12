@@ -53,14 +53,14 @@ begin
 		g <= (others => '0');
 		b <= (others => '0');
 		--draw the ball
-		if((row <= 240 + 5 and row >= 240 - 5) and (column <= 330 + 5 and column >= 330 - 5)) then
+		if((row <= ball_y + 3 and row >= ball_y - 3) and (column <= ball_x + 3 and column >= ball_x - 3)) then
 			r <= "11111111";
 			g <= (others => '0');
 			b <= (others => '0');
 		--draw the paddle
-		elsif((row <= 240 + 15 and row >= 240 - 15) and (column <= 15 and column >= 5)) then
-			r <= "11111111";
-			g <= (others => '0');
+		elsif((row <= paddle_y + 30 and row >= paddle_y - 30) and (column <= 13 and column >= 7)) then
+			r <= (others => '0');
+			g <= "11111111";
 			b <= (others => '0');
 		end if;
 		--top of the A
