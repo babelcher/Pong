@@ -43,26 +43,48 @@ architecture Behavioral of pixel_gen is
 begin
 process(row, column, blank)
 begin
+	--draw background
 	if(blank = '0') then
-	if(row < 400) then
-		if(column < 210) then
-			r <= "11111111";
-			g <= (others => '0');
-			b <= (others => '0');
-		elsif(column >= 210 and column < 420) then
-			r <= (others => '0');
-			g <= "11111111";
-			b <= (others => '0');
-		else
+		--top of the A
+		if((row <= 130 and row >= 120) and (column <= 315 and column >= 240)) then
 			r <= (others => '0');
 			g <= (others => '0');
 			b <= "11111111";
+		--middle of the A
+		elsif((row <= 245 and row >= 235) and (column <= 315 and column >= 240)) then
+				r <= (others => '0');
+				g <= (others => '0');
+				b <= "11111111";
+		--left side of the A
+		elsif((row <= 360 and row >= 130) and (column <= 250 and column >= 240)) then
+				r <= (others => '0');
+				g <= (others => '0');
+				b <= "11111111";
+		--right side of the A
+		elsif((row <= 360 and row >= 130) and (column <= 315 and column >= 305)) then
+				r <= (others => '0');
+				g <= (others => '0');
+				b <= "11111111";
+		--left side of the F
+		elsif((row <= 360 and row >= 130) and (column <= 345 and column >= 335)) then
+				r <= (others => '0');
+				g <= (others => '0');
+				b <= "11111111";
+		--top of the F
+		elsif((row <= 130 and row >= 120) and (column <= 400 and column >= 335)) then
+			r <= (others => '0');
+			g <= (others => '0');
+			b <= "11111111";
+		--middle of the F
+		elsif((row <= 245 and row >= 235) and (column <= 400 and column >= 335)) then
+				r <= (others => '0');
+				g <= (others => '0');
+				b <= "11111111";		
+		else
+			r <= (others => '0');
+			g <= (others => '0');
+			b <= (others => '0');
 		end if;
-	else
-		r <= (others => '0');
-		g <= "11111111";
-		b <= "11111111";
-	end if;
 	end if;
 end process;
 end Behavioral;
