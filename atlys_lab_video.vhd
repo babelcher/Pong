@@ -43,7 +43,7 @@ end atlys_lab_video;
 architecture belcher of atlys_lab_video is
     -- TODO: Signals, as needed
 	 
-	 signal row_sig, column_sig: unsigned(10 downto 0);
+	 signal row_sig, column_sig, ball_x_sig, ball_y_sig, paddle_y_sig: unsigned(10 downto 0);
 	 signal red, green, blue: STD_LOGIC_VECTOR(7 downto 0);
 	 signal pixel_clk, serialize_clk, serialize_clk_n, blank, h_sync, v_sync, clock_s, red_s, green_s, blue_s: STD_LOGIC;
 begin
@@ -91,6 +91,9 @@ begin
 		row => row_sig,
 		column => column_sig,
 		blank => blank,
+		ball_x => ball_x_sig,
+		ball_y => ball_y_sig,
+		paddle_y => paddle_y_sig,
 		r => red,
 		g => green,
 		b => blue

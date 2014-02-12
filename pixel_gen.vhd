@@ -33,6 +33,9 @@ entity pixel_gen is
     Port ( row : in  unsigned(10 downto 0);
            column : in  unsigned(10 downto 0);
            blank : in  STD_LOGIC;
+			  ball_x   : in unsigned(10 downto 0);
+			  ball_y   : in unsigned(10 downto 0);
+			  paddle_y : in unsigned(10 downto 0);
            r : out  std_logic_vector(7 downto 0);
            g : out  std_logic_vector(7 downto 0);
            b : out  std_logic_vector(7 downto 0));
@@ -41,10 +44,21 @@ end pixel_gen;
 architecture Behavioral of pixel_gen is
 
 begin
-process(row, column, blank)
+process(row, column, blank, ball_x, ball_y, paddle_y)
 begin
 	--draw background
 	if(blank = '0') then
+		--draw the ball
+		if((row <= 240 + 5 and row >= 240 - 5) and (column <= 330 + 5 and column >= 330 - 5)) then
+			r <= "11111111";
+			g <= (others => '0');
+			b <= (others => '0');
+		--draw the paddle
+		elsif((row <= 240 + 15 and row >= 240 - 15) and (column <= 15 and column >= 5)) then
+			r <= "11111111";
+			g <= (others => '0');
+			b <= (others => '0');
+		end if;
 		--top of the A
 		if((row <= 130 and row >= 120) and (column <= 315 and column >= 240)) then
 			r <= (others => '0');
