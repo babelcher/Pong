@@ -48,6 +48,10 @@ process(row, column, blank, ball_x, ball_y, paddle_y)
 begin
 	--draw background
 	if(blank = '0') then
+		--draw the default black
+		r <= (others => '0');
+		g <= (others => '0');
+		b <= (others => '0');
 		--draw the ball
 		if((row <= 240 + 5 and row >= 240 - 5) and (column <= 330 + 5 and column >= 330 - 5)) then
 			r <= "11111111";
@@ -94,10 +98,6 @@ begin
 				r <= (others => '0');
 				g <= (others => '0');
 				b <= "11111111";		
-		else
-			r <= (others => '0');
-			g <= (others => '0');
-			b <= (others => '0');
 		end if;
 	end if;
 end process;
