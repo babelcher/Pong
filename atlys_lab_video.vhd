@@ -32,6 +32,8 @@ use UNISIM.VComponents.all;
 entity atlys_lab_video is
     Port ( clk : in  STD_LOGIC;
            reset : in  STD_LOGIC;
+			  BTNUP : in STD_LOGIC;
+			  BTNDN : in STD_LOGIC;
            tmds : out  STD_LOGIC_VECTOR (3 downto 0);
            tmdsb : out  STD_LOGIC_VECTOR (3 downto 0));
 end atlys_lab_video;
@@ -45,7 +47,7 @@ architecture belcher of atlys_lab_video is
 	 
 	 signal row_sig, column_sig, ball_x_sig, ball_y_sig, paddle_y_sig: unsigned(10 downto 0);
 	 signal red, green, blue: STD_LOGIC_VECTOR(7 downto 0);
-	 signal pixel_clk, serialize_clk, serialize_clk_n, blank, h_sync, v_sync, clock_s, red_s, green_s, blue_s: STD_LOGIC;
+	 signal pixel_clk, serialize_clk, serialize_clk_n, blank, h_sync, v_sync, clock_s, red_s, green_s, blue_s, v_completed_sig: STD_LOGIC;
 begin
 
     -- Clock divider - creates pixel clock from 100MHz clock
@@ -81,7 +83,7 @@ begin
 		reset => reset,
 		h_sync => h_sync,
 		v_sync => v_sync,
-		v_completed => open,
+		v_completed => v_completed_sig,
 		blank => blank,
 		row => row_sig,
 		column => column_sig
@@ -97,6 +99,18 @@ begin
 		r => red,
 		g => green,
 		b => blue
+	);
+	
+	--pong control component instantiation
+	Inst_pong_control: entity work.pong_control(Behavioral) PORT MAP(
+		clk => pixel_clk,
+		reset => reset,
+		up => BTNUP,
+		down => BTNDN,
+		v_completed => v_completed_sig,
+		ball_x => open,
+		ball_y => open,
+		paddle_y => paddle_y_sig
 	);
 
     -- Convert VGA signals to HDMI (actually, DVID ... but close enough)
