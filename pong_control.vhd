@@ -215,13 +215,13 @@ begin
 						ball_x_next <= ball_x_reg + to_unsigned(x_velocity, 11);
 					end if;
 				when hit_top_wall =>
-					y_direction := '0';
+					y_direction := '1';
 					ball_y_next <= ball_y_reg - to_unsigned(y_velocity, 11);
 				when hit_right_wall =>
 					x_direction := '0';
 					ball_x_next <= ball_x_reg - to_unsigned(x_velocity, 11);
 				when hit_bottom_wall => 
-					y_direction := '1';
+					y_direction := '0';
 					ball_y_next <= ball_y_reg + to_unsigned(y_velocity, 11);
 				when hit_paddle =>
 					x_direction := '1';
