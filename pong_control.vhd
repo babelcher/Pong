@@ -45,7 +45,7 @@ architecture Behavioral of pong_control is
 	type paddle_state_type is
 		(stationary, paddle_up, paddle_down);
 	signal paddle_state_reg, paddle_state_next: paddle_state_type;
-	signal ball_x_next, ball_y_next, paddle_y_next: unsigned(10 downto 0);
+	signal ball_x_next, ball_y_next, paddle_y_next, paddle_y_logic: unsigned(10 downto 0);
 	signal ball_x_buf, ball_y_buf, paddle_y_buf: unsigned(10 downto 0);
 	
 	signal paddle_y_reg: unsigned(10 downto 0):= to_unsigned(240, 11);
@@ -66,12 +66,12 @@ begin
 	process(clk)
 	begin
 		if(rising_edge(clk)) then
-			paddle_y_reg <= paddle_y_next;
+			paddle_y_buf <= paddle_y_next;
 		end if;
 	end process;
 	
 	--logic for position of paddle
-	paddle_y_next <= (paddle_y_reg - 1) when paddle_state_reg = paddle_up else
+	paddle_y_logic <= (paddle_y_reg - 1) when paddle_state_reg = paddle_up else
 						  (paddle_y_reg + 1) when paddle_state_reg = paddle_down else
 						  paddle_y_reg;
 	
@@ -104,7 +104,7 @@ begin
 	--look ahead output logic
 	process(paddle_state_next, paddle_y_next)
 	begin
-		paddle_y_buf <= paddle_y_reg;		
+		paddle_y_next <= paddle_y_logic;		
 	end process;
 	
 	paddle_y <= paddle_y_buf;
