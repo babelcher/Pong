@@ -168,7 +168,7 @@ begin
 	if(count_reg = TOP_OF_COUNT) then
 		case ball_state_reg is
 			when moving =>
-				if(ball_y_reg = 10) then
+				if(ball_y_reg < 10) then
 					ball_state_next <= hit_top_wall;
 				elsif(ball_y_reg = 470) then
 					ball_state_next <= hit_bottom_wall;
@@ -215,14 +215,14 @@ begin
 						ball_x_next <= ball_x_reg + to_unsigned(x_velocity, 11);
 					end if;
 				when hit_top_wall =>
-					y_direction := '1';
-					ball_y_next <= ball_y_reg - to_unsigned(y_velocity, 11);
+					y_direction := '0';
+					ball_y_next <= ball_y_reg + to_unsigned(y_velocity, 11);
 				when hit_right_wall =>
 					x_direction := '0';
 					ball_x_next <= ball_x_reg - to_unsigned(x_velocity, 11);
 				when hit_bottom_wall => 
-					y_direction := '0';
-					ball_y_next <= ball_y_reg + to_unsigned(y_velocity, 11);
+					y_direction := '1';
+					ball_y_next <= ball_y_reg - to_unsigned(y_velocity, 11);
 				when hit_paddle =>
 					x_direction := '1';
 					ball_x_next <= ball_x_reg + to_unsigned(x_velocity, 11);
