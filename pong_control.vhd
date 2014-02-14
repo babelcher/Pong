@@ -47,8 +47,12 @@ architecture Behavioral of pong_control is
 	signal paddle_state_reg, paddle_state_next: paddle_state_type;
 	signal ball_x_next, ball_y_next, paddle_y_next, paddle_y_logic: unsigned(10 downto 0);
 	signal ball_x_buf, ball_y_buf, paddle_y_buf: unsigned(10 downto 0);
+	signal count_reg: unsigned(10 downto 0):= "00000000000";
+	signal count_next: unsigned(10 downto 0);
 	
 	signal paddle_y_reg: unsigned(10 downto 0):= to_unsigned(240, 11);
+	
+	constant TOP_OF_COUNT : integer := 600;
 
 begin
 
@@ -66,19 +70,30 @@ begin
 	process(clk)
 	begin
 		if(rising_edge(clk)) then
-			paddle_y_buf <= paddle_y_next;
+			paddle_y_reg <= paddle_y_next;
 		end if;
 	end process;
-	
-	--logic for position of paddle
-	paddle_y_logic <= (paddle_y_reg - 1) when paddle_state_reg = paddle_up else
-						  (paddle_y_reg + 1) when paddle_state_reg = paddle_down else
-						  paddle_y_reg;
+						  
+	--logic for the counter
+	count_next <= 	(others => '0') when count_reg = TOP_OF_COUNT else
+						count_reg + 1 when v_completed = '1' else
+						count_reg;
+					
+	--count register
+	process(clk, reset)
+	begin
+		if reset = '1' then
+			count_reg <= (others => '0');
+		elsif rising_edge(clk) then
+			count_reg <= count_next;
+		end if;
+	end process;
 	
 	--next state logic for paddle
 	process(paddle_state_reg, up, down)
 	begin
 	paddle_state_next <= paddle_state_reg;
+	if(count_reg = TOP_OF_COUNT) then
 		case paddle_state_reg is
 			when stationary =>
 				if(up = '1') then
@@ -99,15 +114,25 @@ begin
 					paddle_state_next <= paddle_up;
 				end if;
 			end case;
+	end if;
 	end process;
 	
 	--look ahead output logic
-	process(paddle_state_next, paddle_y_next)
+	process(paddle_state_next, paddle_y_reg, count_reg)
 	begin
-		paddle_y_next <= paddle_y_logic;		
+		paddle_y_next <= paddle_y_reg;
+		if(count_reg = TOP_OF_COUNT) then
+		case paddle_state_next is
+			when stationary =>
+			when paddle_up =>
+				paddle_y_next <= paddle_y_reg - to_unsigned(1,11);
+			when paddle_down =>
+				paddle_y_next <= paddle_y_reg + to_unsigned(1,11);
+		end case;
+		end if;
 	end process;
 	
-	paddle_y <= paddle_y_buf;
+	paddle_y <= paddle_y_reg;
 
 end Behavioral;
 
