@@ -125,9 +125,13 @@ begin
 		case paddle_state_next is
 			when stationary =>
 			when paddle_up =>
-				paddle_y_next <= paddle_y_reg - to_unsigned(1,11);
+				if(paddle_y_reg > 30) then
+					paddle_y_next <= paddle_y_reg - to_unsigned(1,11);
+				end if;
 			when paddle_down =>
-				paddle_y_next <= paddle_y_reg + to_unsigned(1,11);
+				if(paddle_y_reg <= 450) then
+					paddle_y_next <= paddle_y_reg + to_unsigned(1,11);
+				end if;
 		end case;
 		end if;
 	end process;
