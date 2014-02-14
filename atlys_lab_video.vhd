@@ -108,8 +108,8 @@ begin
 		up => BTNUP,
 		down => BTNDN,
 		v_completed => v_completed_sig,
-		ball_x => open,
-		ball_y => open,
+		ball_x => ball_x_sig,
+		ball_y => ball_y_sig,
 		paddle_y => paddle_y_sig
 	);
 
