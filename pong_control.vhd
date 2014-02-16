@@ -141,6 +141,7 @@ begin
 		end case;
 		end if;
 	end process;
+	---------------------------------------------------------------------------------------------------------------------------
 	
 	--state register for the ball
 	process(reset, clk)
@@ -162,22 +163,25 @@ begin
 	end process;
 	
 	--next state logic for ball
-	process(ball_state_reg, ball_x_reg, ball_y_reg)
+	process(ball_state_reg, ball_x_reg, ball_y_reg, paddle_y_reg)
 	begin
 	ball_state_next <= ball_state_reg;
 	if(count_reg = TOP_OF_COUNT) then
 		case ball_state_reg is
 			when moving =>
-				if(ball_y_reg < 10) then
+				if(ball_y_reg < to_unsigned(10, 11)) then
 					ball_state_next <= hit_top_wall;
-				elsif(ball_y_reg = 470) then
+				elsif(ball_y_reg = to_unsigned(470, 11)) then
 					ball_state_next <= hit_bottom_wall;
-				elsif(ball_x_reg = 0) then
+				elsif(ball_x_reg = to_unsigned(10, 11)) then
 					ball_state_next <= hit_left_wall;
-				elsif(ball_x_reg = 670) then
+				elsif(ball_x_reg > to_unsigned(630, 11)) then
 					ball_state_next <= hit_right_wall;
-				elsif(ball_x_reg = 13 and ball_y_reg = paddle_y_reg) then
-					ball_state_next <= hit_paddle;
+				end if;
+				if(ball_x_reg = to_unsigned(13, 11)) then
+					if((ball_y_reg >= paddle_y_reg - to_unsigned(30, 11)) and (ball_y_reg <= paddle_y_reg + to_unsigned(30, 11))) then
+						ball_state_next <= hit_paddle;
+					end if;
 				end if;
 			when hit_top_wall =>
 				ball_state_next <= moving;
@@ -200,6 +204,7 @@ begin
 		if(count_reg = TOP_OF_COUNT) then
 			case ball_state_next is
 				when hit_left_wall =>
+					ball_x_next <= to_unsigned(10, 11);
 				when moving =>
 					if(x_direction = '1' and y_direction = '0') then
 						ball_y_next <= ball_y_reg + to_unsigned(y_velocity, 11);
