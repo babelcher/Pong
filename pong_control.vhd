@@ -53,7 +53,7 @@ architecture Behavioral of pong_control is
 	signal ball_y_reg: unsigned(10 downto 0):= to_unsigned(240, 11);	
 	signal count_reg: unsigned(10 downto 0):= "00000000000";
 	signal count_next: unsigned(10 downto 0);
-	signal x_direction_reg, y_direction_reg, x_direction_next, y_direction_next: STD_LOGIC;
+	signal x_direction_reg, y_direction_reg, x_direction_next, y_direction_next, stop_reg, stop_next: STD_LOGIC;
 	signal x_velocity, y_velocity: integer:= 1;
 	
 	signal paddle_y_reg: unsigned(10 downto 0):= to_unsigned(240, 11);
@@ -160,9 +160,11 @@ begin
 		if(reset = '1') then
 			x_direction_reg <= '1';
 			y_direction_reg <= '1';
+			stop_reg <= '0';
 		elsif(rising_edge(clk)) then
 			x_direction_reg <= x_direction_next;
 			y_direction_reg <= y_direction_next;
+			stop_reg <= stop_next;
 		end if;
 	end process;
 	
@@ -216,14 +218,16 @@ begin
 	end process;
 	
 	--ball direction output logic
-	process(ball_state_next, x_direction_reg, y_direction_reg, count_reg)
+	process(ball_state_next, x_direction_reg, y_direction_reg, count_reg, stop_reg)
 	begin
 		y_direction_next <= y_direction_reg;
 		x_direction_next <= x_direction_reg;
+		stop_next <= stop_reg;
 		if(count_reg = 0) then
 			case ball_state_next is
 				when hit_left_wall =>
 					x_direction_next <= '1';
+					stop_next <= '1';
 				when moving =>
 					y_direction_next <= y_direction_reg;
 					x_direction_next <= x_direction_reg;
@@ -239,11 +243,11 @@ begin
 		end if;
 	end process;
 	
-	process(count_reg, ball_x_reg, ball_y_reg)
+	process(count_reg, ball_x_reg, ball_y_reg, v_completed, stop_reg)
 	begin
 	ball_x_next <= ball_x_reg;
 	ball_y_next <= ball_y_reg;
-		if(count_reg = 0) then
+		if(count_reg = 0 and v_completed = '1' and stop_reg = '0') then
 			if(x_direction_reg = '1') then
 				ball_x_next <= ball_x_reg + 1;
 			else
