@@ -174,17 +174,17 @@ begin
 			ball_y_reg <= to_unsigned(240, 11);
 		elsif(rising_edge(clk)) then
 			ball_x_reg <= ball_x_next;
-			ball_x_reg <= ball_y_next;
+			ball_y_reg <= ball_y_next;
 		end if;
 	end process;
 	
 	--
 	
 	--next state logic for ball
-	process(ball_state_reg, ball_x_reg, ball_y_reg, paddle_y_reg, count_next)
+	process(ball_state_reg, ball_state_next, ball_x_reg, ball_y_reg, paddle_y_reg, count_reg)
 	begin
 	ball_state_next <= ball_state_reg;
-	if(count_next = TOP_OF_COUNT) then
+	if(count_reg = 0) then
 		case ball_state_reg is
 			when moving =>
 				if(ball_y_reg = to_unsigned(10, 11)) then
@@ -210,16 +210,17 @@ begin
 			when hit_paddle =>
 				ball_state_next <= moving;
 			when hit_left_wall =>
+				ball_state_next <= moving;
 			end case;
 	end if;
 	end process;
 	
-	--look ahead output logic
-	process(ball_state_next, x_direction_reg, y_direction_reg, count_next)
+	--ball direction output logic
+	process(ball_state_next, x_direction_reg, y_direction_reg, count_reg)
 	begin
 		y_direction_next <= y_direction_reg;
 		x_direction_next <= x_direction_reg;
-		if(count_next = TOP_OF_COUNT) then
+		if(count_reg = 0) then
 			case ball_state_next is
 				when hit_left_wall =>
 					x_direction_next <= '1';
@@ -238,11 +239,11 @@ begin
 		end if;
 	end process;
 	
-	process(count_next)
+	process(count_reg, ball_x_reg, ball_y_reg)
 	begin
 	ball_x_next <= ball_x_reg;
 	ball_y_next <= ball_y_reg;
-		if(count_next = TOP_OF_COUNT and v_completed = '1') then
+		if(count_reg = 0) then
 			if(x_direction_reg = '1') then
 				ball_x_next <= ball_x_reg + 1;
 			else
