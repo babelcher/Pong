@@ -166,6 +166,18 @@ begin
 		end if;
 	end process;
 	
+	--ball position register
+	process(clk, reset)
+	begin
+		if(reset = '1') then
+			ball_x_reg <= to_unsigned(320, 11);
+			ball_y_reg <= to_unsigned(240, 11);
+		elsif(rising_edge(clk)) then
+			ball_x_reg <= ball_x_next;
+			ball_x_reg <= ball_y_next;
+		end if;
+	end process;
+	
 	--
 	
 	--next state logic for ball
@@ -212,7 +224,8 @@ begin
 				when hit_left_wall =>
 					x_direction_next <= '1';
 				when moving =>
-					
+					y_direction_next <= y_direction_reg;
+					x_direction_next <= x_direction_reg;
 				when hit_top_wall =>
 					y_direction_next <= '0';					
 				when hit_right_wall =>
