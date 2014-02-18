@@ -53,12 +53,13 @@ architecture Behavioral of pong_control is
 	signal ball_y_reg: unsigned(10 downto 0):= to_unsigned(240, 11);	
 	signal count_reg: unsigned(10 downto 0):= "00000000000";
 	signal count_next: unsigned(10 downto 0);
+	signal x_direction_reg, y_direction_reg, x_direction_next, y_direction_next: STD_LOGIC;
+	signal x_velocity, y_velocity: integer:= 1;
 	
 	signal paddle_y_reg: unsigned(10 downto 0):= to_unsigned(240, 11);
 	
 	constant TOP_OF_COUNT : integer := 600;
-	shared variable x_direction, y_direction : STD_LOGIC := '1'; 
-	shared variable x_velocity, y_velocity : integer := 1;
+	
 
 begin
 
@@ -153,33 +154,38 @@ begin
 		end if;
 	end process;
 	
-	--output buffer for ball
-	process(clk)
+	--ball direction register
+	process(clk, reset)
 	begin
-		if(rising_edge(clk)) then
-			ball_y_reg <= ball_y_next;
-			ball_x_reg <= ball_x_next;
+		if(reset = '1') then
+			x_direction_reg <= '1';
+			y_direction_reg <= '1';
+		elsif(rising_edge(clk)) then
+			x_direction_reg <= x_direction_next;
+			y_direction_reg <= y_direction_next;
 		end if;
 	end process;
 	
+	--
+	
 	--next state logic for ball
-	process(ball_state_reg, ball_x_reg, ball_y_reg, paddle_y_reg)
+	process(ball_state_reg, ball_x_reg, ball_y_reg, paddle_y_reg, count_next)
 	begin
 	ball_state_next <= ball_state_reg;
-	if(count_reg = TOP_OF_COUNT) then
+	if(count_next = TOP_OF_COUNT) then
 		case ball_state_reg is
 			when moving =>
-				if(ball_y_reg < to_unsigned(10, 11)) then
+				if(ball_y_reg = to_unsigned(10, 11)) then
 					ball_state_next <= hit_top_wall;
 				elsif(ball_y_reg = to_unsigned(470, 11)) then
 					ball_state_next <= hit_bottom_wall;
 				elsif(ball_x_reg = to_unsigned(10, 11)) then
 					ball_state_next <= hit_left_wall;
-				elsif(ball_x_reg > to_unsigned(630, 11)) then
+				elsif(ball_x_reg = to_unsigned(630, 11)) then
 					ball_state_next <= hit_right_wall;
 				end if;
 				if(ball_x_reg = to_unsigned(13, 11)) then
-					if((ball_y_reg >= paddle_y_reg - to_unsigned(30, 11)) and (ball_y_reg <= paddle_y_reg + to_unsigned(30, 11))) then
+					if((ball_y_reg > paddle_y_reg - to_unsigned(30, 11)) and (ball_y_reg < paddle_y_reg + to_unsigned(30, 11))) then
 						ball_state_next <= hit_paddle;
 					end if;
 				end if;
@@ -197,41 +203,43 @@ begin
 	end process;
 	
 	--look ahead output logic
-	process(ball_state_next, ball_y_reg, ball_x_reg, count_reg)
+	process(ball_state_next, x_direction_reg, y_direction_reg, count_next)
 	begin
-		ball_y_next <= ball_y_reg;
-		ball_x_next <= ball_x_reg;
-		if(count_reg = TOP_OF_COUNT) then
+		y_direction_next <= y_direction_reg;
+		x_direction_next <= x_direction_reg;
+		if(count_next = TOP_OF_COUNT) then
 			case ball_state_next is
 				when hit_left_wall =>
-					ball_x_next <= to_unsigned(10, 11);
+					x_direction_next <= '1';
 				when moving =>
-					if(x_direction = '1' and y_direction = '0') then
-						ball_y_next <= ball_y_reg + to_unsigned(y_velocity, 11);
-						ball_x_next <= ball_x_reg + to_unsigned(x_velocity, 11);
-					elsif(x_direction = '0' and y_direction = '0') then
-						ball_y_next <= ball_y_reg + to_unsigned(y_velocity, 11);
-						ball_x_next <= ball_x_reg - to_unsigned(x_velocity, 11);
-					elsif(x_direction = '0' and y_direction = '1') then
-						ball_y_next <= ball_y_reg - to_unsigned(y_velocity, 11);
-						ball_x_next <= ball_x_reg - to_unsigned(x_velocity, 11);
-					elsif(x_direction = '1' and y_direction = '1') then
-						ball_y_next <= ball_y_reg - to_unsigned(y_velocity, 11);
-						ball_x_next <= ball_x_reg + to_unsigned(x_velocity, 11);
-					end if;
+					
 				when hit_top_wall =>
-					y_direction := '0';
-					ball_y_next <= ball_y_reg + to_unsigned(y_velocity, 11);
+					y_direction_next <= '0';					
 				when hit_right_wall =>
-					x_direction := '0';
-					ball_x_next <= ball_x_reg - to_unsigned(x_velocity, 11);
+					x_direction_next <= '0';					
 				when hit_bottom_wall => 
-					y_direction := '1';
-					ball_y_next <= ball_y_reg - to_unsigned(y_velocity, 11);
+					y_direction_next <= '1';					
 				when hit_paddle =>
-					x_direction := '1';
-					ball_x_next <= ball_x_reg + to_unsigned(x_velocity, 11);
+					x_direction_next <= '1';					
 			end case;
+		end if;
+	end process;
+	
+	process(count_next)
+	begin
+	ball_x_next <= ball_x_reg;
+	ball_y_next <= ball_y_reg;
+		if(count_next = TOP_OF_COUNT and v_completed = '1') then
+			if(x_direction_reg = '1') then
+				ball_x_next <= ball_x_reg + 1;
+			else
+				ball_x_next <= ball_x_reg - 1;
+			end if;
+			if(y_direction_reg = '1') then
+				ball_y_next <= ball_y_reg - 1;
+			else
+				ball_y_next <= ball_y_reg + 1;
+			end if;
 		end if;
 	end process;
 	
