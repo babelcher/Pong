@@ -1,3 +1,8 @@
+###################################################################
+## Author: C2C Brandon Belcher
+## Date: 19 February 2014
+## Function: Updated to map the buttons and switch from the board to the software.
+###################################################################
 VCCAUX = 3.3;
 
 NET "clk" LOC = "L15" | PERIOD = 100 MHz;

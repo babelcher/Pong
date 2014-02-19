@@ -1,21 +1,8 @@
 ----------------------------------------------------------------------------------
--- Company: 
--- Engineer: 
--- 
--- Create Date:    11:06:28 01/29/2014 
--- Design Name: 
--- Module Name:    v_sync_gen - Behavioral 
--- Project Name: 
--- Target Devices: 
--- Tool versions: 
--- Description: 
---
--- Dependencies: 
---
--- Revision: 
--- Revision 0.01 - File Created
--- Additional Comments: 
---
+-- Author: C2C Brandon Belcher
+-- Date: 19 February 2014
+-- Function: Uses clock cycles and whether or not the h_sync_gen has completed every
+-- column in that specific row and then moves on to the next row.
 ----------------------------------------------------------------------------------
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;

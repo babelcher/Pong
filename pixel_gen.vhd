@@ -1,21 +1,8 @@
 ----------------------------------------------------------------------------------
--- Company: 
--- Engineer: 
--- 
--- Create Date:    11:13:52 01/29/2014 
--- Design Name: 
--- Module Name:    pixel_gen - Behavioral 
--- Project Name: 
--- Target Devices: 
--- Tool versions: 
--- Description: 
---
--- Dependencies: 
---
--- Revision: 
--- Revision 0.01 - File Created
--- Additional Comments: 
---
+-- Author: C2C Brandon Belcher
+-- Date: 19 February 2014
+-- Function: Determines what color every pixel on the screen should be and then 
+-- makes them the corresponding color.
 ----------------------------------------------------------------------------------
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;

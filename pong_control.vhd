@@ -1,21 +1,8 @@
 ----------------------------------------------------------------------------------
--- Company: 
--- Engineer: 
--- 
--- Create Date:    11:01:17 02/12/2014 
--- Design Name: 
--- Module Name:    pong_control - Behavioral 
--- Project Name: 
--- Target Devices: 
--- Tool versions: 
--- Description: 
---
--- Dependencies: 
---
--- Revision: 
--- Revision 0.01 - File Created
--- Additional Comments: 
---
+-- Author: C2C Brandon Belcher
+-- Date: 19 February 2014
+-- Function: Contains the logic to get the pong game to work correctly. Outputs the 
+-- positions of the paddle and ball so that they can be drawn via pixel_gen.
 ----------------------------------------------------------------------------------
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;

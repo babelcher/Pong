@@ -1,21 +1,8 @@
 ----------------------------------------------------------------------------------
--- Company: 
--- Engineer: 
--- 
--- Create Date:    11:12:13 01/29/2014 
--- Design Name: 
--- Module Name:    vga_sync - Behavioral 
--- Project Name: 
--- Target Devices: 
--- Tool versions: 
--- Description: 
---
--- Dependencies: 
---
--- Revision: 
--- Revision 0.01 - File Created
--- Additional Comments: 
---
+-- Author: C2C Brandon Belcher
+-- Date: 19 February 2014
+-- Function: This module syncs up to the screen according to h_sync and v_sync to
+-- determine what position it is at on the screen.
 ----------------------------------------------------------------------------------
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
