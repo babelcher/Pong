@@ -46,7 +46,7 @@ architecture Behavioral of pong_control is
 	type paddle_state_type is
 		(stationary, paddle_up, paddle_down);
 	type ball_state_type is
-		(moving, hit_top_wall, hit_bottom_wall, hit_right_wall, hit_paddle, hit_left_wall);
+		(moving, hit_top_wall, hit_bottom_wall, hit_right_wall, hit_paddle_top, hit_paddle_bottom, hit_left_wall);
 	signal paddle_state_reg, paddle_state_next: paddle_state_type;
 	signal ball_state_reg, ball_state_next: ball_state_type;
 	signal ball_x_next, ball_y_next, paddle_y_next: unsigned(10 downto 0);
@@ -132,10 +132,10 @@ begin
 	end process;
 	
 	--look ahead output logic
-	process(paddle_state_next, paddle_y_reg, count_reg)
+	process(paddle_state_next, paddle_y_reg, count_reg, v_completed)
 	begin
 		paddle_y_next <= paddle_y_reg;
-		if(count_reg = 0) then
+		if(count_reg = 0 and v_completed = '1') then
 		case paddle_state_next is
 			when stationary =>
 			when paddle_up =>
@@ -206,8 +206,10 @@ begin
 					ball_state_next <= hit_right_wall;
 				end if;
 				if(ball_x_reg = to_unsigned(13, 11)) then
-					if((ball_y_reg > paddle_y_reg - to_unsigned(30, 11)) and (ball_y_reg < paddle_y_reg + to_unsigned(30, 11))) then
-						ball_state_next <= hit_paddle;
+					if((ball_y_reg >= paddle_y_reg - to_unsigned(30, 11)) and (ball_y_reg <= paddle_y_reg)) then
+						ball_state_next <= hit_paddle_top;
+					elsif((ball_y_reg <= paddle_y_reg + to_unsigned(30, 11)) and (ball_y_reg >= paddle_y_reg)) then
+						ball_state_next <= hit_paddle_bottom;
 					end if;
 				end if;
 			when hit_top_wall =>
@@ -216,7 +218,9 @@ begin
 				ball_state_next <= moving;
 			when hit_bottom_wall =>
 				ball_state_next <= moving;
-			when hit_paddle =>
+			when hit_paddle_top =>
+				ball_state_next <= moving;
+			when hit_paddle_bottom =>
 				ball_state_next <= moving;
 			when hit_left_wall =>
 				ball_state_next <= moving;
@@ -244,8 +248,12 @@ begin
 					x_direction_next <= '0';					
 				when hit_bottom_wall => 
 					y_direction_next <= '1';					
-				when hit_paddle =>
-					x_direction_next <= '1';					
+				when hit_paddle_top =>
+					x_direction_next <= '1';
+					y_direction_next <= '1';
+				when hit_paddle_bottom =>
+					x_direction_next <= '1';
+					y_direction_next <= '0';
 			end case;
 		end if;
 	end process;
