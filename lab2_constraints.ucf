@@ -15,3 +15,5 @@ NET "TMDSB(3)"  LOC = "A6" | IOSTANDARD = TMDS_33 ;
 
 NET "BTNUP" LOC = "N4";	# Button to go up
 NET "BTNDN" LOC = "P3"; # Button to go down
+
+NET "SW7" LOC = "E4"; #switch for velocity

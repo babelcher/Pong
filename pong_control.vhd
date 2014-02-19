@@ -35,6 +35,7 @@ entity pong_control is
            up : in  STD_LOGIC;
            down : in  STD_LOGIC;
            v_completed : in  STD_LOGIC;
+			  speed : in STD_LOGIC;
            ball_x : out  unsigned (10 downto 0);
            ball_y : out  unsigned (10 downto 0);
            paddle_y : out  unsigned (10 downto 0));
@@ -52,13 +53,15 @@ architecture Behavioral of pong_control is
 	signal ball_x_reg: unsigned(10 downto 0):= to_unsigned(320, 11);
 	signal ball_y_reg: unsigned(10 downto 0):= to_unsigned(240, 11);	
 	signal count_reg: unsigned(10 downto 0):= "00000000000";
-	signal count_next: unsigned(10 downto 0);
+	signal count_next, velocity: unsigned(10 downto 0);
 	signal x_direction_reg, y_direction_reg, x_direction_next, y_direction_next, stop_reg, stop_next: STD_LOGIC;
 	signal x_velocity, y_velocity: integer:= 1;
 	
+	
 	signal paddle_y_reg: unsigned(10 downto 0):= to_unsigned(240, 11);
 	
-	constant TOP_OF_COUNT : integer := 600;
+	constant SLOW, TOP_OF_COUNT : integer := 600;
+	constant FAST : integer := 200;
 	
 
 begin
@@ -82,9 +85,13 @@ begin
 	end process;
 						  
 	--logic for the counter
-	count_next <= 	(others => '0') when count_reg = TOP_OF_COUNT else
+	count_next <= 	(others => '0') when count_reg = velocity else
 						count_reg + 1 when v_completed = '1' else
 						count_reg;
+						
+	--velocity logic
+	velocity <= to_unsigned(FAST, 11) when speed = '1' else
+					to_unsigned(SLOW, 11);
 					
 	--count register
 	process(clk, reset)
@@ -100,7 +107,7 @@ begin
 	process(paddle_state_reg, up, down)
 	begin
 	paddle_state_next <= paddle_state_reg;
-	if(count_reg = TOP_OF_COUNT) then
+	if(count_reg = 0) then
 		case paddle_state_reg is
 			when stationary =>
 				if(up = '1') then
@@ -128,7 +135,7 @@ begin
 	process(paddle_state_next, paddle_y_reg, count_reg)
 	begin
 		paddle_y_next <= paddle_y_reg;
-		if(count_reg = TOP_OF_COUNT) then
+		if(count_reg = 0) then
 		case paddle_state_next is
 			when stationary =>
 			when paddle_up =>

@@ -34,6 +34,7 @@ entity atlys_lab_video is
            reset : in  STD_LOGIC;
 			  BTNUP : in STD_LOGIC;
 			  BTNDN : in STD_LOGIC;
+			  SW7 : in STD_LOGIC;
            tmds : out  STD_LOGIC_VECTOR (3 downto 0);
            tmdsb : out  STD_LOGIC_VECTOR (3 downto 0));
 end atlys_lab_video;
@@ -108,6 +109,7 @@ begin
 		up => BTNUP,
 		down => BTNDN,
 		v_completed => v_completed_sig,
+		speed => SW7,
 		ball_x => ball_x_sig,
 		ball_y => ball_y_sig,
 		paddle_y => paddle_y_sig
