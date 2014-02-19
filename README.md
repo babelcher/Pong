@@ -272,3 +272,18 @@ The modules, each ```.vhd``` file, were connected as shown in the schematic belo
 ![Intricate schematic](schematic.JPG)
 
 ### Test/Debug
+
+* Drawing the background and the paddle were relatively easy. Getting the paddle to move within the bounds of the screen was also relatively easy. The only problem I had with getting the paddle to move was a few syntax errors that were preventing it's position from updating.
+* The majority of my time was spent trying to get the ball to move. Originally I was updating the position and the direction within the same process which proved to be detrimental to my success. When I would change a bounds condition for the ball hitting the left wall it would get stuck in some other part of the screen that should not have been effected by the miniscule change. After hours spent debugging this, I finally decided to split things up into different processes for the ball logic.
+* Once I split things up for the ball logic, the coding was relatively straight forward. The main problem I had at this point was a ```x``` where a ```y``` was supposed to be. This took over an hour of frustration to find. Once I corrected this syntax error the ball moved fine and bounced off of everything like it was supposed to.
+* B Functionality was straight forward.
+* A Functionality allowed the ball to pass straight through the paddle on the first test. This was corrected with a ```<=``` sign instead of ```<``` to check where the position of the ball was at on the paddle.
+
+
+### Conclusion
+
+This lab took me way longer than expected because I was trying to do too many things inside of one process instead of splitting things up from the beginning. The lesson I learned here is that VHDL is super sensitive to trying to multiple things within one process at a time. From here on out, I will try to minimize what is going on inside of a process. 
+
+### Documentation
+
+C2C Tramaine Barnett helped me get the paddle moving because of a few syntax errors. I referenced C2C John Miller's code that he had posted on github when I was changing my ball logic from the singular process to multiple processes. 
