@@ -87,6 +87,10 @@ Output buffer for the paddle:
 	end process;
 ```
 
+The constructs above were used to realize in hardware the state-transition diagram for the paddle shown below.
+
+![paddle transition diagram](paddle_moore_machine.JPG)
+
 #### Count and Velocity Logic
 
 I also used a counter to count up to a certain number to slow the game down. Otherwise the ball and paddle would move as fast as the clock does which would make the game impossible. The count logic is below.
@@ -265,7 +269,7 @@ Outputs to ```pixel_gen.vhd``` that actually draw the position of the ball and t
 	ball_y <= ball_y_reg;
 ```
 
-The constructs above implemented the moore machine for the ball in the state transition diagram below.
+The constructs above implemented in hardware the moore machine for the ball in the state transition diagram below.
 ![Moore state transition diagram for the ball position](ball_moore_machine.JPG)
 
 The modules, each ```.vhd``` file, were connected as shown in the schematic below.
